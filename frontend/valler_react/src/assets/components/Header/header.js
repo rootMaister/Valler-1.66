@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {Component} from 'react';
 
 
 export default function Header(){
+    
     return(
         <div>
             <header uk-sticky>
@@ -12,7 +13,7 @@ export default function Header(){
                                 <nav className="barra-cima">
                                     <a href="index.html"><img className="logo-valer" src="img/valler_logo_novo.png"
                                             alt="Logo da Valer - Clicar para Voltar para a página inicial"/></a>
-                                    <button className="categorias ">Categorias <i className="fas fa-bars"></i></button>
+                                    <button className="categoria s ">Categorias <i className="fas fa-bars"></i></button>
                                     <div uk-dropdown>
                                         <ul className="uk-nav uk-dropdown-nav">
                                             <li><a href="#">Bebidas</a></li>
