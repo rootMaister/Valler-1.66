@@ -21,22 +21,14 @@ namespace backend.Domains
         [Column("titulo")]
         [StringLength(255)]
         public string Titulo { get; set; }
-        [Required]
-        [Column("data_oferta")]
-        [StringLength(255)]
-        public string DataOferta { get; set; }
-        [Required]
-        [Column("data_vencimento")]
-        [StringLength(255)]
-        public string DataVencimento { get; set; }
-        [Required]
+        [Column("data_oferta", TypeName = "datetime")]
+        public DateTime DataOferta { get; set; }
+        [Column("data_vencimento", TypeName = "datetime")]
+        public DateTime DataVencimento { get; set; }
         [Column("preco")]
-        [StringLength(255)]
-        public string Preco { get; set; }
-        [Required]
+        public double Preco { get; set; }
         [Column("quantidade")]
-        [StringLength(255)]
-        public string Quantidade { get; set; }
+        public int Quantidade { get; set; }
         [Required]
         [Column("imagem")]
         [StringLength(255)]

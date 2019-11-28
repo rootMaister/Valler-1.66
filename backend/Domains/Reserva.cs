@@ -14,18 +14,12 @@ namespace backend.Domains
         public int? IdOferta { get; set; }
         [Column("id_usuario")]
         public int? IdUsuario { get; set; }
-        [Required]
         [Column("quantidade_reserva")]
-        [StringLength(255)]
-        public string QuantidadeReserva { get; set; }
-        [Required]
-        [Column("cronometro")]
-        [StringLength(255)]
-        public string Cronometro { get; set; }
-        [Required]
+        public int QuantidadeReserva { get; set; }
+        [Column("cronometro", TypeName = "time(3)")]
+        public TimeSpan Cronometro { get; set; }
         [Column("status_reserva")]
-        [StringLength(255)]
-        public string StatusReserva { get; set; }
+        public bool StatusReserva { get; set; }
 
         [ForeignKey(nameof(IdOferta))]
         [InverseProperty(nameof(Oferta.Reserva))]

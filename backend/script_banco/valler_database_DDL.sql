@@ -60,10 +60,10 @@ CREATE TABLE Oferta (
 	id_oferta INT IDENTITY PRIMARY KEY,
 	id_produto INT FOREIGN KEY REFERENCES Produto (id_produto),
 	titulo VARCHAR (255) NOT NULL,
-	data_oferta VARCHAR (255) NOT NULL,
-	data_vencimento VARCHAR (255) NOT NULL,
-	preco VARCHAR (255) NOT NULL,
-	quantidade VARCHAR (255) NOT NULL,
+	data_oferta datetime NOT NULL,
+	data_vencimento datetime NOT NULL,
+	preco float NOT NULL,
+	quantidade int NOT NULL,
 	imagem VARCHAR (255) NOT NULL
 );
 
@@ -72,9 +72,9 @@ CREATE TABLE Reserva (
 	id_reserva INT IDENTITY PRIMARY KEY,
 	id_oferta INT FOREIGN KEY REFERENCES Oferta (id_oferta),
 	id_usuario INT FOREIGN KEY REFERENCES Usuario (id_usuario),
-	quantidade_reserva VARCHAR (255) NOT NULL,
-	cronometro VARCHAR (255) NOT NULL,
-	status_reserva VARCHAR (255) NOT NULL
+	quantidade_reserva int NOT NULL,
+	cronometro time(3) NOT NULL,
+	status_reserva bit NOT NULL
 );
 
 

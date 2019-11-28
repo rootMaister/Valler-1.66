@@ -68,13 +68,13 @@ namespace backend.Controllers
                 UploadRepository _up = new UploadRepository();
                 
                 var a = Request.Form.Files[0];
-
+                
                 oferta.IdProduto = int.Parse(Request.Form["IdProduto"]); 
                 oferta.Titulo = Request.Form["Titulo"];
-                oferta.DataOferta = Request.Form["DataOferta"];
-                oferta.DataVencimento = Request.Form["DataVencimento"]; 
-                oferta.Preco = Request.Form["Preco"];
-                oferta.Quantidade = Request.Form["Quantidade"];
+                oferta.DataOferta = DateTime.Parse(Request.Form["DataOferta"]);
+                oferta.DataVencimento = DateTime.Parse((Request.Form["DataVencimento"])); 
+                oferta.Preco = float.Parse(Request.Form["Preco"]);
+                oferta.Quantidade = int.Parse(Request.Form["Quantidade"]);
                 oferta.Imagem = _up.Upload(a);
 
                 // oferta.Imagem = _up.Upload(a);
