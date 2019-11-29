@@ -14,7 +14,7 @@ export default class reserva extends Component{
     }
 
     getReservaAtiva= () =>{
-        api.Axios
+        // api.Axios
     }
 
     render(){
@@ -23,6 +23,7 @@ export default class reserva extends Component{
         return(
             <div>
                 <Header/>
+
 
                 
             </div>

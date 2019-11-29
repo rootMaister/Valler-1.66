@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Route, BrowserRouter as Router, Switch} from 'react-router-dom';
 import geren_p from './assets/pages/Gerenciamento_produtos/gerenciamento_produtos';
+import reser_cliente from './assets/pages/Reserva_Cliente/reserva_cliente';
 // import './index.css';
 import App from './assets/pages/Home/App';
+
 import * as serviceWorker from './serviceWorker';
 import './assets/css/style.css';
 import './assets/css/uikit-rtl.css';
@@ -18,6 +20,7 @@ const Rotas = (
             <Switch>
                 <Route exact path="/" component={App}/>
                 <Route path="/geren_p" component={geren_p}/>
+                <Route path="/reser_cliente" component ={reser_cliente}/>
             </Switch>
         </div>
     </Router>
