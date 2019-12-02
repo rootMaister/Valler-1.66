@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Button} from 'react-bootstrap';
 
 import Header from '../../components/Header/header.js';
 import api from '../../services/api';
@@ -37,7 +38,9 @@ export default class App extends Component{
       <>
         <Header/>
 
-        
+        <Button  variant="primary">
+            Teste
+          </Button>
       </>
     );
   }

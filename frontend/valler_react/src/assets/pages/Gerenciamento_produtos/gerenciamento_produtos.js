@@ -1,19 +1,58 @@
 import React, { Component } from 'react';
 import Header from '../../components/Header/header';
+import bootstrap, { ModalBody } from 'react-bootstrap'
+import {Button, Modal} from 'react-bootstrap';
+import { MDBInput } from "mdbreact";
+import api from '../../services/api';
 
 export default class gerenciamento_produtos extends Component {
-
+    
+    
+    
+    
     constructor() {
-
+        
         super();
-
+        
         this.state = {
 
-            listarProduto: [],
-            listarOferta :[]
-        }
 
+            // States dos Modais
+            modalProduto: false,
+            modalOferta: false,
+            show: false,
+
+            // States de Get da Página
+            listarProduto: [],
+            listarOferta :[],
+
+            // States de Get de /categorias
+            puxaCategorias: [],
+
+            // States de Cadastro de Produto 
+            postProduto: {
+                nomeProduto: "",
+                descricao: "",
+                categoria1: ""
+            }
+
+
+        }
     }
+    
+    
+
+    puxaCategorias=()=>{
+        api.get("/categoria")
+        .then(data => {
+            this.setState({puxaCategorias : data.data})
+            console.log("Lista de Categorias puxadas", data.data)
+        })
+    }
+
+    
+
+    
 
     //DELETE -- Oferta
 
@@ -37,6 +76,23 @@ export default class gerenciamento_produtos extends Component {
     
     }
 
+    // POST (CADASTRAR) -- Produto
+
+    cadastrarProduto=(c)=>{
+        api.post('/produto', this.state.cadastrarProduto)
+        .then(response => {
+            console.log(response);
+        })
+        .catch(error => {
+            console.log(error);
+            this.setState({erroMsg: "Não foi possível cadastrar esse produto"});
+        })
+
+        setTimeout(() => {
+            this.listaAtualizada();
+        }, 1200);
+    }
+
 
     listaAtualizada = () => {
         fetch("http://localhost:5000/api/Produto")
@@ -57,6 +113,7 @@ export default class gerenciamento_produtos extends Component {
         console.log("Página carregada")
         this.listaAtualizada();
         this.listaOfertaAtualizada();
+        this.puxaCategorias();
     }
 
     componentDidUpdate() {
@@ -64,7 +121,40 @@ export default class gerenciamento_produtos extends Component {
     }
 
 
-    render() {
+    abrirModalProduto =()=> {
+
+        this.toggleProduto();
+    }
+
+    abrirModalOferta =()=> {
+
+        this.toggleOferta();
+    }
+
+
+    toggleProduto = () => {
+        this.setState({
+            modalProduto: !this.state.modalProduto
+        });
+
+    }
+
+    toggleOferta = () => {
+        this.setState({
+            modalOferta: !this.state.modalOferta
+        });
+
+    }
+
+    atualizaEstado = (input) => {
+        this.setState({ [input.target.name] : input.target.value})
+    }
+   
+
+    render(){
+
+
+
         return (
             <div>
                 <Header />
@@ -134,84 +224,84 @@ export default class gerenciamento_produtos extends Component {
 
 
                     <div class="cads container">
-                        <a class="cad" href="AdicionarProduto.html">
+
+                        <Button onClick={this.abrirModalProduto}>
                             Cadastrar Produto
-                        <div class="icon-cad">
-                                <i class="fas fa-hamburger"></i>
-                                +
-                        </div>
-                        </a>
-                        <a class="cad" href="AdicionarProduto.html">
-                            Cadastrar Categoria
-                        <div class="icon-cad">
-                                <i class="fas fa-bars"></i>
-                                +
-                        </div>
-                        </a>
+                            <div class="icon-cad">
+                                    <i class="fas fa-hamburger"></i>
+                                    +
+                            </div>
+                        </Button>
+
+                        <Button onClick={this.abrirModalOferta}>
+                                Cadastrar Categoria
+                            <div class="icon-cad">
+                                    <i class="fas fa-bars"></i>
+                                    +
+                            </div>
+                        </Button>
                     </div>
 
-                    <section class="container sessao-produtos">
+                    
 
-                        {/* {
-                            this.state.listaOfertaAtualizada.map(
-                                function (Oferta) {
-                                    return (
-                                        <a  key={Oferta.idOferta} class ="card-item">
 
-                                            <div class="header-card">
-                                                <span class="uk-label uk-label-success .uk-position-right">{Oferta.data_vencimento}</span>
-                                                <img src="img/produtos/Suco-de-Uva-Maguary-Selecao-Tinto-15l.png" alt="" />
-                                                <div class="avaliacao">
-                                                    <span class="fa fa-star checked"></span>
-                                                    <span class="fa fa-star checked"></span>
-                                                    <span class="fa fa-star checked"></span>
-                                                    <span class="fa fa-star unchecked"></span>
-                                                    <span class="fa fa-star unchecked"></span>
-                                                </div>
-                                            </div>
 
-                                            <div class="main-card">
-                                                <p></p>
-                                                <p class="preco"> <span class="local"> - Mercado Sol</span></p>
-                                            </div>
+                    <Modal show={this.state.modalProduto} toggleProduto={this.toggleProduto}>
 
-                                            <div class="footer-card">
-                                                <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Adicionar a Reserva&nbsp;&nbsp;<span uk-icon="tag"></span></button>
-                                            </div>
+                        <Modal.Header>
+                            Cadastrar Produto
+                        </Modal.Header>
 
-                                        </a>
-                                        
+                        <Modal.Body show={this.state.modalOferta} toggleOferta={this.toggleOferta}>
+                            <MDBInput
+                                label="Nome do Produto"
+                                id="nomeProduto"
+                                name="nomeProduto"
+                                value={this.state.cadastrarProduto}
+                                size="lg"/>
 
-                                )
+                            <select onChange={this.atualizaEstado} name="categoriaId" id="option_tipoevento">
+                                <option>Escolha uma Categoria</option>
+                                {
+                                    this.state.puxaCategorias.map(function (listaPuxada){
+                                        return(
+                                            <>  
+                                                <option key={listaPuxada.idCategoria} value={listaPuxada.idCategoria}>{listaPuxada.categoria1}</option>
+                                            </>
+                                        )
+                                    })
                                 }
-                            )
-                        } */}
+                            </select>
+
+                            <MDBInput label="Descrição: Ex: Coca Cola 2L - Zero" size="lg"/>
+
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button type="submit">
+                                Cadastrar Produto
+                            </Button>
+                            <Button onClick={this.abrirModalProduto}>
+                                Fechar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
 
 
-                        {/* <a key={Oferta.idOferta} class="card-item">
+                    <Modal show={this.state.modalOferta} toggleOferta={this.toggleOferta}>
+                        <Modal.Header>
+                            Teste Oferta
+                        </Modal.Header>
 
-                            <div class="header-card">
-                                <span class="uk-label uk-label-success .uk-position-right">Vence em 30 dias</span>
-                                <img src="img/produtos/9320814968862.jpg    " alt="" />
-                                <div class="avaliacao">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star unchecked"></span>
-                                    <span class="fa fa-star unchecked"></span>
-                                </div>
-                            </div>
+                        
 
-                            <div class="main-card">
-                                <p>{Oferta.nomeOferta}</p>
-                                <p class="preco">R$2,43<span class="local"> - Mercado Extra</span></p>
-                            </div>
+                        <Modal.Footer>
+                            <Button onClick={this.abrirModalOferta}>
+                                Fechar
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
 
-                            <div class="footer-card">
-                                <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Adicionar a Reserva&nbsp;&nbsp;<span uk-icon="tag"></span></button>
-                            </div>
-
-                        </a> */}
+                    <section class="container sessao-produtos">
 
                         <a class="card-item">
 
@@ -266,8 +356,6 @@ export default class gerenciamento_produtos extends Component {
 
                 </main>
             </div>
-
-
 
         )
     }
