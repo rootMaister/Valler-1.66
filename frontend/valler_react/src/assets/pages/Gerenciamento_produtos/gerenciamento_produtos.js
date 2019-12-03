@@ -4,6 +4,7 @@ import bootstrap, { ModalBody } from 'react-bootstrap'
 import {Button, Modal} from 'react-bootstrap';
 import { MDBInput } from "mdbreact";
 import api from '../../services/api';
+import MaterialTable from 'material-table';
 
 export default class gerenciamento_produtos extends Component {
     
@@ -26,16 +27,30 @@ export default class gerenciamento_produtos extends Component {
             listarProduto: [],
             listarOferta :[],
 
+
             // States de Get de /categorias
             puxaCategorias: [],
 
             // States de Cadastro de Produto 
             postProduto: {
+                idCategoria: "",
+                idUsuario:   "",
                 nomeProduto: "",
-                descricao: "",
-                categoria1: ""
-            }
+                descricao:   "",
+            },
 
+           
+
+
+
+            columns: [
+                { title: 'ID Categoria', field: 'idCategoria' },
+                { title: 'ID Usuario', field: 'idUsuario', initialEditValue: 'initial edit value' },
+                { title: 'Nome de Produto', field: 'nomeProduto', type: 'numeric' },
+                { title: 'Descrição', field: 'descricao', type: 'numeric' },
+              ],
+
+              data: ""
 
         }
     }
@@ -46,19 +61,36 @@ export default class gerenciamento_produtos extends Component {
         api.get("/categoria")
         .then(data => {
             this.setState({puxaCategorias : data.data})
-            console.log("Lista de Categorias puxadas", data.data)
+           
         })
     }
 
     
+    // setandoData = () => {
+    //     let novaLista = [];
 
+    //     this.state.listarProduto.map(p => {
+    //         let novoValor = {
+    //             name: p.idProduto,
+    //             surname: p.idCategoria,
+    //             birthYear: p.nomeProduto,
+    //             birthCity: p.descricao,
+    //         } 
+
+    //         novaLista.push( novoValor );
+    //     })
+    //     //this.setState({ data: novaLista})
+
+    //     console.log(this.data)
+
+    // }
     
 
     //DELETE -- Oferta
 
     deletarOferta = (id) => {
 
-        console.log("Excluindo");
+        
 
     fetch("http://localhost:5000/api/oferta/" + id , {
         method : "DELETE" ,
@@ -79,7 +111,12 @@ export default class gerenciamento_produtos extends Component {
     // POST (CADASTRAR) -- Produto
 
     cadastrarProduto=(c)=>{
-        api.post('/produto', this.state.cadastrarProduto)
+
+        c.preventDefault();
+
+        
+
+        api.post('/produto', this.state.postProduto)
         .then(response => {
             console.log(response);
         })
@@ -94,10 +131,20 @@ export default class gerenciamento_produtos extends Component {
     }
 
 
+    cadastrarSetProduto=(input)=>{
+        this.setState({
+            postProduto: {
+                ...this.state.postProduto,
+                [input.target.name]: input.target.value
+            }
+        })
+    }
+
+
     listaAtualizada = () => {
         fetch("http://localhost:5000/api/Produto")
             .then(response => response.json())
-            .then(data => this.setState({ listarProduto: data })
+            .then(data => this.setState({ listarProduto: data})
                 , console.log(this.listarProdutos));
 
     }
@@ -111,13 +158,16 @@ export default class gerenciamento_produtos extends Component {
 
     componentDidMount() {
         console.log("Página carregada")
-        this.listaAtualizada();
-        this.listaOfertaAtualizada();
-        this.puxaCategorias();
+        // this.setandoData();
+        // this.listaAtualizada();
+        // this.listaOfertaAtualizada();
+        // this.setandoData();
     }
 
     componentDidUpdate() {
+        
         console.log("Pagina atualizada")
+        
     }
 
 
@@ -152,7 +202,17 @@ export default class gerenciamento_produtos extends Component {
    
 
     render(){
+        let t = []
+        let teste = {
+            idCategoria: "a",
+            idUsuario: "b",
+            nomeProduto: "c",
+            descricao: "d"
+        }
 
+        t.push(teste)
+
+        //this.setState({data : t})
 
 
         return (
@@ -242,6 +302,54 @@ export default class gerenciamento_produtos extends Component {
                         </Button>
                     </div>
 
+
+
+
+                    <MaterialTable
+                            title="Editable Preview"
+                            columns={this.state.columns}
+                            data={this.t}
+                            editable={{
+
+                            onRowAdd: newData =>
+                                new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    {
+                                    const data = this.state.data;
+                                    data.push(newData);
+                                    this.setState({ data }, () => resolve());
+                                    }
+                                    resolve()
+                                }, 1000)
+                                }),
+
+                            onRowUpdate: (newData, oldData) =>
+                                new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    {
+                                    const data = this.state.data;
+                                    const index = data.indexOf(oldData);
+                                    data[index] = newData;
+                                    this.setState({ data }, () => resolve());
+                                    }
+                                    resolve()
+                                }, 1000)
+                                }),
+
+                            onRowDelete: oldData =>
+                                new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    {
+                                    let data = this.state.data;
+                                    const index = data.indexOf(oldData);
+                                    data.splice(index, 1);
+                                    this.setState({ data }, () => resolve());
+                                    }
+                                    resolve()
+                                }, 1000)
+                                }),
+                            }}
+                        />
                     
 
 
@@ -252,39 +360,59 @@ export default class gerenciamento_produtos extends Component {
                             Cadastrar Produto
                         </Modal.Header>
 
-                        <Modal.Body show={this.state.modalOferta} toggleOferta={this.toggleOferta}>
-                            <MDBInput
-                                label="Nome do Produto"
-                                id="nomeProduto"
-                                name="nomeProduto"
-                                value={this.state.cadastrarProduto}
-                                size="lg"/>
+                        <form onSubmit={this.cadastrarProduto}>
 
-                            <select onChange={this.atualizaEstado} name="categoriaId" id="option_tipoevento">
-                                <option>Escolha uma Categoria</option>
-                                {
-                                    this.state.puxaCategorias.map(function (listaPuxada){
-                                        return(
-                                            <>  
-                                                <option key={listaPuxada.idCategoria} value={listaPuxada.idCategoria}>{listaPuxada.categoria1}</option>
-                                            </>
-                                        )
-                                    })
-                                }
-                            </select>
+                            <Modal.Body show={this.state.modalProduto} toggleOferta={this.toggleProduto}>
 
-                            <MDBInput label="Descrição: Ex: Coca Cola 2L - Zero" size="lg"/>
+                           
+                                    <MDBInput
+                                        label="Nome do Produto"
+                                        id="nomeProduto"
+                                        name="nomeProduto"
+                                        value={this.state.postProduto.nomeProduto}
+                                        size="lg"
+                                        onChange={this.cadastrarSetProduto.bind(this)}/>
+                                    
 
-                        </Modal.Body>
-                        <Modal.Footer>
-                            <Button type="submit">
-                                Cadastrar Produto
-                            </Button>
-                            <Button onClick={this.abrirModalProduto}>
-                                Fechar
-                            </Button>
-                        </Modal.Footer>
-                    </Modal>
+                                    <select onChange={this.cadastrarSetProduto.bind(this)} value={this.state.postProduto.idCategoria} name="idCategoria" id="idCategoria">
+                                        <option>Escolha uma Categoria</option>
+                                        {
+                                            this.state.puxaCategorias.map(function (listaPuxada){
+                                                return(
+                                                    <>  
+                                                        <option key={listaPuxada.idCategoria} value={listaPuxada.idCategoria}>{listaPuxada.categoria1}</option>
+                                                    </>
+                                                )
+                                            })
+                                        }
+                                    </select>
+
+                                    <MDBInput
+                                        label="Descrição:" 
+                                        placeholder="Ex: Coca Cola 2L - Zero" 
+                                        id="descricao"
+                                        name="descricao"
+                                        value={this.state.postProduto.descricao}
+                                        size="lg"
+                                        onChange={this.cadastrarSetProduto.bind(this)}/>
+
+
+                                </Modal.Body>
+                                <Modal.Footer>
+                                    <Button type="submit" onClick={this.abrirModalProduto}>
+                                        Cadastrar Produto
+                                    </Button>
+                                    <Button onClick={this.abrirModalProduto}>
+                                        Fechar
+                                    </Button>
+                                </Modal.Footer>
+                                     
+                            </form>
+                    </Modal>    
+
+                            
+
+                        
 
 
                     <Modal show={this.state.modalOferta} toggleOferta={this.toggleOferta}>
