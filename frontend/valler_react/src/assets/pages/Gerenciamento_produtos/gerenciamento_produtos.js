@@ -38,20 +38,6 @@ export default class gerenciamento_produtos extends Component {
                 nomeProduto: "",
                 descricao:   "",
             },
-
-           
-
-
-
-            columns: [
-                { title: 'ID Categoria', field: 'idCategoria' },
-                { title: 'ID Usuario', field: 'idUsuario', initialEditValue: 'initial edit value' },
-                { title: 'Nome de Produto', field: 'nomeProduto', type: 'numeric' },
-                { title: 'Descrição', field: 'descricao', type: 'numeric' },
-              ],
-
-              data: ""
-
         }
     }
     
@@ -65,28 +51,7 @@ export default class gerenciamento_produtos extends Component {
         })
     }
 
-    
-    // setandoData = () => {
-    //     let novaLista = [];
-
-    //     this.state.listarProduto.map(p => {
-    //         let novoValor = {
-    //             name: p.idProduto,
-    //             surname: p.idCategoria,
-    //             birthYear: p.nomeProduto,
-    //             birthCity: p.descricao,
-    //         } 
-
-    //         novaLista.push( novoValor );
-    //     })
-    //     //this.setState({ data: novaLista})
-
-    //     console.log(this.data)
-
-    // }
-    
-
-    //DELETE -- Oferta
+ 
 
     deletarOferta = (id) => {
 
@@ -158,15 +123,16 @@ export default class gerenciamento_produtos extends Component {
 
     componentDidMount() {
         console.log("Página carregada")
-        // this.setandoData();
-        // this.listaAtualizada();
-        // this.listaOfertaAtualizada();
-        // this.setandoData();
+        this.listaAtualizada();
+        this.puxaCategorias();
+        console.log(this.data)
+        
     }
 
     componentDidUpdate() {
         
         console.log("Pagina atualizada")
+        
         
     }
 
@@ -202,18 +168,6 @@ export default class gerenciamento_produtos extends Component {
    
 
     render(){
-        let t = []
-        let teste = {
-            idCategoria: "a",
-            idUsuario: "b",
-            nomeProduto: "c",
-            descricao: "d"
-        }
-
-        t.push(teste)
-
-        //this.setState({data : t})
-
 
         return (
             <div>
@@ -302,54 +256,23 @@ export default class gerenciamento_produtos extends Component {
                         </Button>
                     </div>
 
-
-
-
+                   <div className="container">     
                     <MaterialTable
-                            title="Editable Preview"
-                            columns={this.state.columns}
-                            data={this.t}
-                            editable={{
-
-                            onRowAdd: newData =>
-                                new Promise((resolve, reject) => {
-                                setTimeout(() => {
-                                    {
-                                    const data = this.state.data;
-                                    data.push(newData);
-                                    this.setState({ data }, () => resolve());
-                                    }
-                                    resolve()
-                                }, 1000)
-                                }),
-
-                            onRowUpdate: (newData, oldData) =>
-                                new Promise((resolve, reject) => {
-                                setTimeout(() => {
-                                    {
-                                    const data = this.state.data;
-                                    const index = data.indexOf(oldData);
-                                    data[index] = newData;
-                                    this.setState({ data }, () => resolve());
-                                    }
-                                    resolve()
-                                }, 1000)
-                                }),
-
-                            onRowDelete: oldData =>
-                                new Promise((resolve, reject) => {
-                                setTimeout(() => {
-                                    {
-                                    let data = this.state.data;
-                                    const index = data.indexOf(oldData);
-                                    data.splice(index, 1);
-                                    this.setState({ data }, () => resolve());
-                                    }
-                                    resolve()
-                                }, 1000)
-                                }),
-                            }}
-                        />
+                            columns={[
+                                { title: "Nome do Produto", field: "name" },
+                                { title: "Soyadı", field: "surname" },
+                                { title: "Doğum Yılı", field: "birthYear"},
+                                { title: "Doğum Yılı", field: "birthYear"}
+                            ]}
+                            data={[
+                                { name: '',
+                                  surname: '', 
+                                  birthYear: '', 
+                                  birthCity: ''}
+                            ]}
+                            />
+                    </div>
+                    
                     
 
 
