@@ -68,7 +68,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize (Roles = "ADM")]
+        // [Authorize (Roles = "ADM")]
         public async Task<ActionResult> Put(int id, Produto produto){
             // Se o id do objeto não existir, ele retorna erro 400
             if(id != produto.IdProduto){
@@ -103,8 +103,8 @@ namespace Backend.Controllers
         }
 
         // DELETE api/categoria/id
+        // [Authorize (Roles = "ADM")]
         [HttpDelete("{id}")]
-        [Authorize (Roles = "ADM")]
         public async Task<ActionResult<Produto>> Delete(int id){
             var produto = await _repositorio.BuscarPorID(id);
             if(produto == null){

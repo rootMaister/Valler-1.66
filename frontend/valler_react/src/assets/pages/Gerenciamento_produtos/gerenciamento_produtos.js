@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import Header from '../../components/Header/header';
 import bootstrap, { ModalBody } from 'react-bootstrap'
-import {Button, Modal} from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { MDBInput } from "mdbreact";
 import api from '../../services/api';
 import MaterialTable from 'material-table';
 
 export default class gerenciamento_produtos extends Component {
-    
-    
-    
-    
+
+
+
+
     constructor() {
-        
+
         super();
-        
+
         this.state = {
 
 
@@ -25,7 +25,7 @@ export default class gerenciamento_produtos extends Component {
 
             // States de Get da Página
             listarProduto: [],
-            listarOferta :[],
+            listarOferta: [],
 
 
             // States de Get de /categorias
@@ -34,61 +34,81 @@ export default class gerenciamento_produtos extends Component {
             // States de Cadastro de Produto 
             postProduto: {
                 idCategoria: "",
-                idUsuario:   "",
+                idUsuario: "",
                 nomeProduto: "",
-                descricao:   "",
+                descricao: "",
             },
         }
     }
-    
-    
 
-    puxaCategorias=()=>{
+
+
+    puxaCategorias = () => {
         api.get("/categoria")
-        .then(data => {
-            this.setState({puxaCategorias : data.data})
-           
-        })
+            .then(data => {
+                this.setState({ puxaCategorias: data.data })
+
+            })
     }
 
- 
+
 
     deletarOferta = (id) => {
 
-        
 
-    fetch("http://localhost:5000/api/oferta/" + id , {
-        method : "DELETE" ,
-        headers : {
-            "Content-Type" : "application/json"
-        }
-    })
-    .then(response => response.json())
-    .then(response => {
-        console.log(response);
-        this.listarOferta();
-        this.setState( () => ({ lista: this.state.lista }));
-    })
-    .catch(error => console.log(error))
-    
+
+        fetch("http://localhost:5000/api/oferta/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(response => {
+                console.log(response);
+                this.listarOferta();
+                this.setState(() => ({ lista: this.state.lista }));
+            })
+            .catch(error => console.log(error))
+
     }
+
+
+
+    deleteProduto(id) {
+        console.log(id)
+        api.delete("/Produto/" + id)
+            .then(response => {
+                if (response === 200) {
+                    console.log("Item deletado")
+
+                    setTimeout(() => {
+                        this.listaAtualizada()
+                    }, 1500)
+                }
+            }).catch(error => {
+                console.log(error);
+            })
+
+    }
+
 
     // POST (CADASTRAR) -- Produto
 
-    cadastrarProduto=(c)=>{
+    cadastrarProduto = (c) => {
 
         c.preventDefault();
 
-        
+
 
         api.post('/produto', this.state.postProduto)
-        .then(response => {
-            console.log(response);
-        })
-        .catch(error => {
-            console.log(error);
-            this.setState({erroMsg: "Não foi possível cadastrar esse produto"});
-        })
+            .then(response => {
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({ erroMsg: "Não foi possível cadastrar esse produto" });
+            })
 
         setTimeout(() => {
             this.listaAtualizada();
@@ -96,7 +116,7 @@ export default class gerenciamento_produtos extends Component {
     }
 
 
-    cadastrarSetProduto=(input)=>{
+    cadastrarSetProduto = (input) => {
         this.setState({
             postProduto: {
                 ...this.state.postProduto,
@@ -109,40 +129,40 @@ export default class gerenciamento_produtos extends Component {
     listaAtualizada = () => {
         fetch("http://localhost:5000/api/Produto")
             .then(response => response.json())
-            .then(data => this.setState({ listarProduto: data})
-                , console.log(this.listarProdutos));
+            .then(data => this.setState({ listarProduto: data })
+                , console.log(this.listarProdutos))
+
+            .then(() => {
+                console.log('Minha lista de produto: ', this.state.listarProduto)
+            })
 
     }
 
     listaOfertaAtualizada = () => {
         fetch("http://localhost:5000/api/Oferta")
-        .then(response => response.json())
-        .then(data => this.setState({ listarOferta:data })
-            , console.log(this.listarOferta));
+            .then(response => response.json())
+            .then(data => this.setState({ listarOferta: data })
+                , console.log(this.listarOferta));
     }
 
     componentDidMount() {
         console.log("Página carregada")
         this.listaAtualizada();
-        this.puxaCategorias();
-        console.log(this.data)
-        
+        this.puxaCategorias();        
     }
 
     componentDidUpdate() {
-        
+
         console.log("Pagina atualizada")
-        
-        
     }
 
 
-    abrirModalProduto =()=> {
+    abrirModalProduto = () => {
 
         this.toggleProduto();
     }
 
-    abrirModalOferta =()=> {
+    abrirModalOferta = () => {
 
         this.toggleOferta();
     }
@@ -163,11 +183,11 @@ export default class gerenciamento_produtos extends Component {
     }
 
     atualizaEstado = (input) => {
-        this.setState({ [input.target.name] : input.target.value})
+        this.setState({ [input.target.name]: input.target.value })
     }
-   
 
-    render(){
+
+    render() {
 
         return (
             <div>
@@ -186,94 +206,136 @@ export default class gerenciamento_produtos extends Component {
                         <a href="#"><i class="fas fa-bars"></i>categorias</a>
                     </div>
 
-
-                    <table>
-                        {
-                            this.state.listarProduto .map(
-                                function (Produto) {
-                                    return (
-                                        <tr key={Produto.idProduto}>
-
-                                            <td>{Produto.idProduto} ---</td>
-                                            <td>{Produto.idCategoria} ----</td>
-                                            <td>{Produto.idUsuario} ----</td>
-                                            <td>{Produto.nomeProduto}-----</td>
-                                            <td>{Produto.descricao}------</td>
-
-                                        </tr>
-                                    )
-                                }
-                            )
-
-                        }
-                    </table>
-
-
-                    <table>
-                        {
-                            this.state.listarOferta.map(
-                                function (Oferta) {
-                                    return (
-                                        <tr key={Oferta.idOferta}>
-
-                                            <td>{Oferta.idOferta} ---</td>
-                                            <td>{Oferta.idProduto} ----</td>
-                                            <td>{Oferta.titulo} ----</td>
-                                            <td>{Oferta.dataOferta}-----</td>
-                                            <td>{Oferta.dataVencimento}------</td>
-                                            <td>{Oferta.preco}------</td>
-                                            <td>{Oferta.quantidade}------</td>
-                                            <td>{Oferta.imagem}------</td>
-
-                                        </tr>
-                                    )
-                                }
-                            )
-
-                        }
-                    </table>
-
-
-
-
-
                     <div class="cads container">
 
                         <Button onClick={this.abrirModalProduto}>
                             Cadastrar Produto
                             <div class="icon-cad">
-                                    <i class="fas fa-hamburger"></i>
-                                    +
+                                <i class="fas fa-hamburger"></i>
+                                +
                             </div>
                         </Button>
 
                         <Button onClick={this.abrirModalOferta}>
-                                Cadastrar Categoria
+                            Cadastrar Categoria
                             <div class="icon-cad">
-                                    <i class="fas fa-bars"></i>
-                                    +
+                                <i class="fas fa-bars"></i>
+                                +
                             </div>
                         </Button>
                     </div>
 
-                   <div className="container">     
-                    <MaterialTable
+                    <div className="container">
+
+
+
+
+                        <MaterialTable
+
+                            title={"Produtos Cadastrados"}
+
+
+                            // actions={
+                            //     [
+                            //         ...this.listarProduto.map(function(produto){
+                            //             return({
+                            //                 onClick: (event, rowData) => {
+                            //                     () => this.deleteProduto(Produto.idProduto)
+                            //                 }
+                            //             })
+                            //         })
+                                    
+                            //     ]
+                            // }
+
+                          
+
                             columns={[
-                                { title: "Nome do Produto", field: "name" },
-                                { title: "Soyadı", field: "surname" },
-                                { title: "Doğum Yılı", field: "birthYear"},
-                                { title: "Doğum Yılı", field: "birthYear"}
+
+                                { title: "ID do produto", field: "ID" },
+                                { title: "Nome do produto", field: "name" },
+                                { title: "Categoria", field: "categoria1" },
+                                { title: "Descrição", field: "descricao" },
+                                { title: "Ações", field: "Tesre"}
+
                             ]}
-                            data={[
-                                { name: '',
-                                  surname: '', 
-                                  birthYear: '', 
-                                  birthCity: ''}
-                            ]}
-                            />
+
+                            // data={[
+
+                            //     {
+                            //         name: 'testando',
+                            //         surname: 'TEste2',
+                            //         birthYear: 'alsdjhas',
+                            //         birthCity: 'ldlkadj'
+                            //     },
+
+                            data={
+                                [
+                                    ...this.state.listarProduto.map(function (produto) {
+                                        return (
+                                            {
+                                                ID: produto.idProduto,
+                                                name: produto.nomeProduto,
+                                                categoria1: produto.idCategoriaNavigation.categoria1,
+                                                descricao: produto.descricao,
+                                                
+                                            }
+
+
+                                                                         
+                                        )
+                                    })
+                                ]
+                            }
+
+                            
+                                // JEITO ERRADO!
+                                // DEVEMOS PREENCHER O VALOR DO DATA COM O MAP, NÃO CRIAR UMA PROPRIEDADE 'DATA' PARA CADA OBJETO
+                            
+
+                            // {
+
+                            // ...this.state.listarProduto.map(function (produto) {
+                            //     return (
+                            //         data = {
+
+                            //             name: 'testando',
+                            //             surname: 'TEste2',
+                            //             birthYear: 'alsdjhas',
+                            //             birthCity: 'ldlkadj'
+
+                            //         }
+                            //     )
+                            // }).bind(this)
+                            // }
+
+                        // ]}
+
+
+                        // {
+                        //     ...this.state.listarProduto.map(function(insereValor){
+                        //         return(
+                        // data={[
+                        //         { name: '',
+                        //             surname: 'TEste2', 
+                        //             birthYear: 'alsdjhas', 
+                        //             birthCity: 'ldlkadj'
+                        //         }
+                        //     ]}
+                        //          )
+                        //     })
+                        // }
+
+
+
+                        >
+                            
+                        
+                        
+                        </MaterialTable>
                     </div>
-                    
-                    
+
+
 
 
 
@@ -287,55 +349,55 @@ export default class gerenciamento_produtos extends Component {
 
                             <Modal.Body show={this.state.modalProduto} toggleOferta={this.toggleProduto}>
 
-                           
-                                    <MDBInput
-                                        label="Nome do Produto"
-                                        id="nomeProduto"
-                                        name="nomeProduto"
-                                        value={this.state.postProduto.nomeProduto}
-                                        size="lg"
-                                        onChange={this.cadastrarSetProduto.bind(this)}/>
-                                    
 
-                                    <select onChange={this.cadastrarSetProduto.bind(this)} value={this.state.postProduto.idCategoria} name="idCategoria" id="idCategoria">
-                                        <option>Escolha uma Categoria</option>
-                                        {
-                                            this.state.puxaCategorias.map(function (listaPuxada){
-                                                return(
-                                                    <>  
-                                                        <option key={listaPuxada.idCategoria} value={listaPuxada.idCategoria}>{listaPuxada.categoria1}</option>
-                                                    </>
-                                                )
-                                            })
-                                        }
-                                    </select>
-
-                                    <MDBInput
-                                        label="Descrição:" 
-                                        placeholder="Ex: Coca Cola 2L - Zero" 
-                                        id="descricao"
-                                        name="descricao"
-                                        value={this.state.postProduto.descricao}
-                                        size="lg"
-                                        onChange={this.cadastrarSetProduto.bind(this)}/>
+                                <MDBInput
+                                    label="Nome do Produto"
+                                    id="nomeProduto"
+                                    name="nomeProduto"
+                                    value={this.state.postProduto.nomeProduto}
+                                    size="lg"
+                                    onChange={this.cadastrarSetProduto.bind(this)} />
 
 
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button type="submit" onClick={this.abrirModalProduto}>
-                                        Cadastrar Produto
+                                <select onChange={this.cadastrarSetProduto.bind(this)} value={this.state.postProduto.idCategoria} name="idCategoria" id="idCategoria">
+                                    <option>Escolha uma Categoria</option>
+                                    {
+                                        this.state.puxaCategorias.map(function (listaPuxada) {
+                                            return (
+                                                <>
+                                                    <option key={listaPuxada.idCategoria} value={listaPuxada.idCategoria}>{listaPuxada.categoria1}</option>
+                                                </>
+                                            )
+                                        })
+                                    }
+                                </select>
+
+                                <MDBInput
+                                    label="Descrição:"
+                                    placeholder="Ex: Coca Cola 2L - Zero"
+                                    id="descricao"
+                                    name="descricao"
+                                    value={this.state.postProduto.descricao}
+                                    size="lg"
+                                    onChange={this.cadastrarSetProduto.bind(this)} />
+
+
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button type="submit" onClick={this.abrirModalProduto}>
+                                    Cadastrar Produto
                                     </Button>
-                                    <Button onClick={this.abrirModalProduto}>
-                                        Fechar
+                                <Button onClick={this.abrirModalProduto}>
+                                    Fechar
                                     </Button>
-                                </Modal.Footer>
-                                     
-                            </form>
-                    </Modal>    
+                            </Modal.Footer>
 
-                            
+                        </form>
+                    </Modal>
 
-                        
+
+
+
 
 
                     <Modal show={this.state.modalOferta} toggleOferta={this.toggleOferta}>
@@ -343,7 +405,7 @@ export default class gerenciamento_produtos extends Component {
                             Teste Oferta
                         </Modal.Header>
 
-                        
+
 
                         <Modal.Footer>
                             <Button onClick={this.abrirModalOferta}>

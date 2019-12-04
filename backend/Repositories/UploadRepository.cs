@@ -36,7 +36,7 @@ namespace backend.Controllers {
                     }
 
                     // return Ok (new { fileName });
-                    return fullPath;
+                    return fileName;
 
                 } else {
                     // return BadRequest ();

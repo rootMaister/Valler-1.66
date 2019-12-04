@@ -122,8 +122,8 @@ namespace backend.Controllers
         }
 
         //DELETE api/evento/id
+        // [Authorize (Roles = "ADM")]
         [HttpDelete("{id}")]
-        [Authorize (Roles = "ADM")]
         public async Task<ActionResult<Oferta>> Delete(int id){
 
             var oferta = await _repositorio.BuscarPorID(id);
