@@ -28,7 +28,8 @@ namespace backend.Domains
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-2R9DLMI\\SQLEXPRESS;Database=Valler;User Id=sa; Password=132");
+                // optionsBuilder.UseSqlServer("Server=DESKTOP-2R9DLMI\\SQLEXPRESS;Database=Valler;User Id=sa; Password=132");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-Q51ADQT\\SQLEXPRESS;Database=Valler_database;User Id=sa; Password=123"); 
             }
         }
 

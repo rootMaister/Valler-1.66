@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Header from '../../components/Header/header';
-import bootstrap, { ModalBody } from 'react-bootstrap'
+import bootstrap, { ModalBody, Pagination } from 'react-bootstrap'
 import { Button, Modal } from 'react-bootstrap';
 import { MDBInput } from "mdbreact";
 import api from '../../services/api';
@@ -76,7 +76,6 @@ export default class gerenciamento_produtos extends Component {
 
 
     deleteProduto(id) {
-        console.log(id)
         api.delete("/Produto/" + id)
             .then(response => {
                 if (response === 200) {
@@ -229,64 +228,140 @@ export default class gerenciamento_produtos extends Component {
 
 
 
-
+                  
                         <MaterialTable
 
                             title={"Produtos Cadastrados"}
 
-
-                            // actions={
-                            //     [
-                            //         ...this.listarProduto.map(function(produto){
-                            //             return({
-                            //                 onClick: (event, rowData) => {
-                            //                     () => this.deleteProduto(Produto.idProduto)
-                            //                 }
-                            //             })
-                            //         })
-                                    
-                            //     ]
-                            // }
-
-                          
-
                             columns={[
 
-                                { title: "ID do produto", field: "ID" },
+                                // { title: "ID do produto", field: "ID" },
                                 { title: "Nome do produto", field: "name" },
                                 { title: "Categoria", field: "categoria1" },
                                 { title: "Descrição", field: "descricao" },
-                                { title: "Ações", field: "Tesre"}
 
                             ]}
-
-                            // data={[
-
-                            //     {
-                            //         name: 'testando',
-                            //         surname: 'TEste2',
-                            //         birthYear: 'alsdjhas',
-                            //         birthCity: 'ldlkadj'
-                            //     },
 
                             data={
                                 [
                                     ...this.state.listarProduto.map(function (produto) {
                                         return (
                                             {
-                                                ID: produto.idProduto,
+                                                // ID: produto.idProduto,
                                                 name: produto.nomeProduto,
                                                 categoria1: produto.idCategoriaNavigation.categoria1,
                                                 descricao: produto.descricao,
                                                 
-                                            }
-
-
-                                                                         
+                                            }   
+                                            
+                                            
                                         )
                                     })
                                 ]
                             }
+
+
+                            options={{
+                                // selection: true,
+                                sorting: true,
+                                
+                            }}
+
+                            localization={{
+                                header: {
+                                    actions:"Ações"
+                                },
+                                body: {
+                                    editRow: {
+                                        deleteText:"Você deseja excluir esse item ?"
+                                    }
+                                },
+                                pagination: {
+                                    labelRowsPerPage:"Linhas por página",
+                                    labelRowsSelect: "Linhas por página"
+                                },
+
+                            }}
+
+                            
+
+                            
+
+                            editable={{
+                                onRowAdd: newData => new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        {
+                                            const data = this.state.listarProduto;
+                                            data.push(newData);
+                                            this.setState({data}, () => resolve ());
+                                
+                                        }   
+                                        resolve()
+                                    }, 1000)
+                                }),
+
+                                onRowUpdate: (newData, oldData) =>
+                                    new Promise ( (resolve, reject) => {
+                                        setTimeout (() => {
+                                            {
+                                                const data = this.state.listarProduto;
+                                                const index = data.indexOf(oldData);
+                                                data[index] = newData;
+                                                this.setState({data}, () => resolve());
+                                            }
+                                            resolve()
+                                        }, 1000)
+                                    }),
+
+                                    onRowDelete: oldData => new Promise((resolve, reject) => {
+                                        setTimeout(() => {
+                                            {
+                                                let data = this.state.listarProduto;
+                                                const index = data.indexOf(oldData);
+                                                data.splice(index, 1);
+                                                this.setState({data}, () => resolve());
+    
+                                            }
+                                            resolve()
+
+                                            // listaAtualizada = () => {
+                                            //     fetch("http://localhost:5000/api/Produto")
+                                            //         .then(response => response.json())
+                                            //         .then(data => this.setState({ listarProduto: data })
+                                            //             , console.log(this.listarProdutos))
+                                        
+                                            //         .then(() => {
+                                            //             console.log('Minha lista de produto: ', this.state.listarProduto)
+                                            //         })
+                                        
+                                            // }
+                                        }, 1000)
+
+                                        
+
+                                    })
+                                // onRowDelete: api.delete("/Produto/"+ this.state.data)
+                                // .then(response => {
+                                //     if (response === 200) {
+                                //         console.log("Item deletado")
+                    
+                                //         setTimeout(() => {
+                                //             this.listaAtualizada()
+                                //         }, 1500)
+                                //     }
+                                // }).catch(error => {
+                                //     console.log(error);
+                                // })
+
+                            }}
+
+                            // actions={[
+                            //     {
+                            //       tooltip: 'Remove All Selected Users',
+                            //       icon: 'delete',
+                            //     }
+                            // ]}
+
 
                             
                                 // JEITO ERRADO!
@@ -334,7 +409,7 @@ export default class gerenciamento_produtos extends Component {
                         
                         </MaterialTable>
                     </div>
-
+                 
 
 
 
@@ -416,55 +491,6 @@ export default class gerenciamento_produtos extends Component {
 
                     <section class="container sessao-produtos">
 
-                        <a class="card-item">
-
-                            <div class="header-card">
-                                <span class="uk-label uk-label-warning .uk-position-right">Vence em 15 dias</span>
-                                <img src="img/produtos/9476860608542.jpg" alt="" />
-                                <div class="avaliacao">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star unchecked"></span>
-                                    <span class="fa fa-star unchecked"></span>
-                                </div>
-                            </div>
-
-                            <div class="main-card">
-                                <p>Arroz Branco Camil 5kg</p>
-                                <p class="preco">R$4,43<span class="local"> - Mercado Dia</span></p>
-                            </div>
-
-                            <div class="footer-card">
-                                <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Adicionar a Reserva&nbsp;&nbsp;<span uk-icon="tag"></span></button>
-                            </div>
-
-                        </a>
-
-                        <a class="card-item">
-
-                            <div class="header-card">
-                                <span class="uk-label uk-label-danger .uk-position-right">Vence em 7 dias</span>
-                                <img src="img/produtos/Feijao-Preto-Super-Maximo-1kg.png" alt="" />
-                                <div class="avaliacao">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star unchecked"></span>
-                                </div>
-                            </div>
-
-                            <div class="main-card">
-                                <p>Feijão Preto Sabor Máximo - 1kg</p>
-                                <p class="preco">R$2,43<span class="local"> - Mercado Extra</span></p>
-                            </div>
-
-                            <div class="footer-card">
-                                <button class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">Adicionar a Reserva&nbsp;&nbsp;<span uk-icon="tag"></span></button>
-                            </div>
-
-                        </a>
                     </section>
 
                 </main>
